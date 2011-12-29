@@ -13,6 +13,7 @@ import code.fastappender2;
 import code.fastappender3;
 import code.fastappender4;
 import code.fastappender5;
+import code.fastappender6;
 
 __gshared:
 
@@ -314,3 +315,8 @@ string testStringBuilder4MultiX() { return testTMulti !StringBuilder4X(); }
 
 string testStringBuilder5Multi () { return testTMulti !StringBuilder5 (); }
 string testStringBuilder5MultiX() { return testTMulti !StringBuilder5X(); }
+
+// **************************************************************************************
+
+string testStringBuilder6Multi () { return testTMulti !StringBuilder6 (); }
+string testStringBuilder6MultiX() { return testTMulti !StringBuilder6X(); }

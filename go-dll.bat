@@ -1,7 +1,7 @@
 @echo off
 call dbuildr test2dll
 call :test StringBuilder2Multi
-call :test StringBuilder2MultiX
+call :test StringBuilder6Multi
 exit
 
 :test

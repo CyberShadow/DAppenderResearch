@@ -44,10 +44,11 @@ void main()
 //		bench!"StringBuilder2Single";
 //		bench!"StringBuilder2SingleX";
 		bench!"StringBuilder2Multi";
-		bench!"StringBuilder2MultiX";
+//		bench!"StringBuilder2MultiX";
 //		bench!"StringBuilder3Multi";
 //		bench!"StringBuilder4Multi";
 //		bench!"StringBuilder4MultiX";
 //		bench!"StringBuilder5Multi";
+		bench!"StringBuilder6Multi";
 	}
 }
