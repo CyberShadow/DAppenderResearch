@@ -70,34 +70,6 @@ private:
 		end = cast(T*) (cast(ubyte*)bi.base + bi.size);
 	}
 
-	// Round up to the next power of two, but after PAGE_SIZE only add PAGE_SIZE.
-	private static size_t nextCapacity(size_t size)
-	{
-		if (size < MIN_SIZE)
-			return MIN_SIZE;
-
-		size--;
-		auto sub = size;
-		sub |= sub >>  1;
-		sub |= sub >>  2;
-		sub |= sub >>  4;
-		sub |= sub >>  8;
-		sub |= sub >> 16;
-		static if (size_t.sizeof > 4)
-			sub |= sub >> 32;
-
-		return (size | (sub & (PAGE_SIZE-1))) + 1;
-	}
-
-	unittest
-	{
-		assert(nextCapacity(  PAGE_SIZE-1) ==   PAGE_SIZE);
-		assert(nextCapacity(  PAGE_SIZE  ) ==   PAGE_SIZE);
-		assert(nextCapacity(  PAGE_SIZE+1) == 2*PAGE_SIZE);
-		assert(nextCapacity(2*PAGE_SIZE  ) == 2*PAGE_SIZE);
-		assert(nextCapacity(2*PAGE_SIZE+1) == 3*PAGE_SIZE);
-	}
-
 	void consolidate()
 	{
 		if (head is tail) // also if null
@@ -207,6 +179,7 @@ alias FastAppender4!(char, true ) StringBuilder4X;
 
 unittest
 {
+	debug writeln("======================");
 	StringBuilder4 sb;
 	sb.put("Hello", ' ', "world!");
 	assert(sb.get() == "Hello world!");
@@ -214,6 +187,7 @@ unittest
 
 unittest
 {
+	debug writeln("======================");
 	StringBuilder4X sb;
 	sb.put("Hello", ' ', "world!");
 	assert(sb.get() == "Hello world!");
@@ -221,6 +195,7 @@ unittest
 
 unittest
 {
+	debug writeln("======================");
 	StringBuilder4 sb;
 	foreach (n; 0..4096)
 		sb.put("Hello", ' ', "world!");

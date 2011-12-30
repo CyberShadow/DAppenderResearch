@@ -32,7 +32,7 @@ void main()
 //		bench!"Append";
 //		bench!"Appender";
 //		bench!"Appender2Single";
-		bench!"Appender2Multi";
+//		bench!"Appender2Multi";
 //		bench!"AppenderConcat";
 //		bench!"AppenderFastJoin";
 //		bench!"FastAppenderSingle";
@@ -49,6 +49,7 @@ void main()
 //		bench!"StringBuilder4Multi";
 //		bench!"StringBuilder4MultiX";
 //		bench!"StringBuilder5Multi";
-		bench!"StringBuilder6Multi";
+//		bench!"StringBuilder6Multi";
+		bench!"StringBuilder7Multi";
 	}
 }

@@ -79,7 +79,7 @@ struct FastAppender2(T, bool X)
 			}
 		}
 
-		auto newCapacity = nextCapacity(newSize);
+		auto newCapacity = newSize < MIN_SIZE ? MIN_SIZE : newSize * 2;
 		//auto newStart = (new T[newCapacity]).ptr;
 
 		debug writeln("qalloc ", newCapacity);
@@ -133,6 +133,7 @@ alias FastAppender2!(char, true ) StringBuilder2X;
 
 unittest
 {
+	debug writeln("======================");
 	StringBuilder2 sb;
 	sb.put("Hello", " ", "world!");
 	assert(sb.get() == "Hello world!");
@@ -140,6 +141,7 @@ unittest
 
 unittest
 {
+	debug writeln("======================");
 	StringBuilder2X sb;
 	sb.put("Hello", " ", "world!");
 	assert(sb.get() == "Hello world!");
@@ -147,7 +149,20 @@ unittest
 
 unittest
 {
+	debug writeln("======================");
 	StringBuilder2 sb;
+	foreach (n; 0..4096)
+		sb.put("Hello", " ", "world!");
+	string s;
+	foreach (n; 0..4096)
+		s ~= "Hello world!";
+	assert(sb.get() == s);
+}
+
+unittest
+{
+	debug writeln("======================");
+	StringBuilder2X sb;
 	foreach (n; 0..4096)
 		sb.put("Hello", " ", "world!");
 	string s;
