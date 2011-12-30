@@ -1,0 +1,2 @@
+non-copying chained expanding appender?
+  - data is only ever copied twice, but there is no final reallocation

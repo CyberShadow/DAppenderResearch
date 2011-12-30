@@ -4,7 +4,8 @@ import core.memory;
 import core.stdc.string;
 import core.stdc.stdio;
 
-import std.stdio;
+debug import std.stdio;
+debug import ae.utils.text;
 
 __gshared const(char)[20] _d = "Yo this is aoeu\n\n\n";
 
@@ -16,8 +17,6 @@ struct FastAppender6(T, bool X)
 
 private:
 	enum PAGE_SIZE = 4096;
-
-	enum size_t ALIGN_MASK = size_t.sizeof - 1;
 
 	struct Node
 	{
@@ -104,6 +103,12 @@ private:
 		assert(nextCapacity(2*PAGE_SIZE+1) == 3*PAGE_SIZE);
 	}
 
+	//enum size_t ALIGN_BITS = 2;  // TODO
+	//enum size_t ALIGN_SIZE = 1 << ALIGN_BITS;
+	enum size_t ALIGN_SIZE = size_t.sizeof;
+	enum size_t ALIGN_MASK = ALIGN_SIZE - 1;
+	enum size_t ALIGN_OVERHEAD = (2 * ALIGN_SIZE) - 2;
+
 	void consolidate()
 	{
 		if (head is null)
@@ -128,16 +133,18 @@ private:
 			auto ptr = n.dataPtr;
 			auto end = ptr + n.size;
 			debug writeln(cast(void*)ptr, " .. ", cast(void*)end);
+		//	debug writeln(hexDump(ptr[0..n.size]));
 			while (ptr < end)
 			{
 				auto sz = *cast(size_t*)ptr;
+			//	debug writeln(sz);
 				ptr += size_t.sizeof;
 				auto al = *cast(size_t*)ptr;
 				ptr += size_t.sizeof;
 				ptr += al;
 				p[0..sz] = ptr[0..sz];
 				p += sz;
-				ptr += (sz+(2*size_t.sizeof - 2)) & ~ALIGN_MASK;
+				ptr += (sz+ALIGN_OVERHEAD) & ~ALIGN_MASK;
 			}
 		}
 		cursor = p;
@@ -184,7 +191,8 @@ private:
 			//	pushad; mov EAX, ECX; call writeInt; popad;
 			//	pushad; mov EAX, ESI; call writeInt; popad;
 			//	pushad; mov EAX, EDI; call writeInt; popad;
-				add ECX, 6; // 2*size_t.sizeof - 2
+				add ECX, ALIGN_OVERHEAD; // 2*ALIGN_SIZE - 2
+			//	and ECX, ~ALIGN_SIZE; // !!
 				shr ECX, 2;
 				rep; movsd;
 			//	add EDI, ECX;
@@ -225,7 +233,7 @@ private:
 public:
 	void put(U...)(U items)
 	{
-		debug writeln("<<");
+	//	debug writeln("<<");
 		size_t len;
 		foreach (item; items)
 			static if (is(typeof(cursor[0] = item)))
@@ -238,7 +246,7 @@ public:
 				static assert(0, "Can't put " ~ typeof(item).stringof);
 
 		// TODO: check for static if length is 1
-		auto cursorEndEstimate = cursor + len + ((items.length * 4) * size_t.sizeof);
+		auto cursorEndEstimate = cursor + len + (items.length * (2 * size_t.sizeof + ALIGN_OVERHEAD));
 		this.totalLength += len;
 
 		if (cursorEndEstimate > end)
@@ -255,7 +263,7 @@ public:
 		assert(p >= cursor && p <= end);
 
 		this.cursor = p;
-		debug writeln(">>");
+	//	debug writeln(">>");
 	}
 
 	T[] get()
